@@ -11,6 +11,9 @@ import java.util.*;
 public class BlockPaletteUtils {
 
     public static void convertToJson(ProxyPass proxy, List<NbtMap> tags) {
+        if (!proxy.getConfiguration().isExportData()) {
+            return;
+        }
 
         List<NbtMap> palette = new ArrayList<>(tags);
 

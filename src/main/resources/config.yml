@@ -14,6 +14,8 @@ log-packets: true
 ## Where to log packet data
 ## Valid options: console, file or both
 log-to: file
+## If the proxy should extract and save version data into the data folder
+export-data: false
 
 ## Packets to ignore to make your log more refined. These default packet are generally spammed
 ignored-packets:
@@ -24,3 +26,16 @@ ignored-packets:
   - "NetworkChunkPublisherUpdatePacket"
   - "ClientCacheBlobStatusPacket"
   - "ClientCacheMissResponsePacket"
+  - "MoveEntityDeltaPacket"
+  - "SetEntityMotionPacket"
+  - "SetEntityDataPacket"
+  - "AddEntityPacket"
+  - "UpdateBlockPacket"
+  - "SetTimePacket"
+  - "EntityEventPacket"
+  - "InventoryContentPacket"
+  - "BiomeDefinitionListPacket"
+  - "CreativeContentPacket"
+  - "AvailableEntityIdentifiersPacket"
+  - "CraftingDataPacket"
+  - "AvailableCommandsPacket"

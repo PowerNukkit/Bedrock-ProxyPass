@@ -29,6 +29,8 @@ public class Configuration {
     private boolean loggingPackets = false;
     @JsonProperty("log-to")
     private LogTo logTo = LogTo.FILE;
+    @JsonProperty("export-data")
+    private boolean exportData = false;
 
     @JsonProperty("ignored-packets")
     private Set<String> ignoredPackets = Collections.emptySet();
