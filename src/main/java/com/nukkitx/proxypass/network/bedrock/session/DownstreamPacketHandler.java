@@ -15,7 +15,6 @@ import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import com.nukkitx.proxypass.ProxyPass;
-import com.nukkitx.proxypass.network.bedrock.util.BlockPaletteUtils;
 import com.nukkitx.proxypass.network.bedrock.util.RecipeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -73,6 +72,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
     }
 
     public boolean handle(StartGamePacket packet) {
+        // TODO This block was commented on upstream ---- START
         if (!proxy.getConfiguration().isExportData()) {
             return false;
         }
@@ -87,7 +87,8 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         palette.sort(Comparator.comparingInt(value -> value.getShort("id")));
         proxy.saveNBT("runtime_block_states", new NbtList<>(NbtType.COMPOUND, palette));
         BlockPaletteUtils.convertToJson(proxy, palette);
-
+        // TODO This block was commented on upstream ---- END
+        
         List<DataEntry> itemData = new ArrayList<>();
         LinkedHashMap<String, Integer> legacyItems = new LinkedHashMap<>();
 
@@ -97,6 +98,8 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
                 legacyItems.putIfAbsent(entry.getIdentifier(), (int) entry.getId());
             }
         }
+
+        itemData.sort(Comparator.comparing(o -> o.name));
 
         proxy.saveJson("legacy_item_ids.json", sortMap(legacyItems));
         proxy.saveJson("runtime_item_states.json", itemData);
@@ -170,7 +173,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
 
     private static Map<String, Integer> sortMap(Map<String, Integer> map) {
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
-        entries.sort(Map.Entry.comparingByValue());
+        entries.sort(Map.Entry.comparingByKey());
 
         Map<String, Integer> sortedMap = new LinkedHashMap<>();
         for (Map.Entry<String, Integer> entry : entries) {
