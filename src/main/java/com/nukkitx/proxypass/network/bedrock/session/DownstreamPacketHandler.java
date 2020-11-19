@@ -15,6 +15,7 @@ import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import com.nukkitx.proxypass.ProxyPass;
+import com.nukkitx.proxypass.network.bedrock.util.BlockPaletteUtils;
 import com.nukkitx.proxypass.network.bedrock.util.RecipeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -77,16 +78,23 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             return false;
         }
         
-        Map<String, Integer> legacyBlocks = new HashMap<>();
-        for (NbtMap entry : packet.getBlockPalette()) {
-            legacyBlocks.putIfAbsent(entry.getCompound("block").getString("name"), (int) entry.getShort("id"));
-        }
+        try {
+            if (packet.getBlockPalette() != null) {
+                Map<String, Integer> legacyBlocks = new HashMap<>();
+                for (NbtMap entry : packet.getBlockPalette()) {
+                    legacyBlocks.putIfAbsent(entry.getCompound("block").getString("name"), (int) entry.getShort("id"));
+                }
 
-        proxy.saveJson("legacy_block_ids.json", sortMap(legacyBlocks));
-        List<NbtMap> palette = new ArrayList<>(packet.getBlockPalette());
-        palette.sort(Comparator.comparingInt(value -> value.getShort("id")));
-        proxy.saveNBT("runtime_block_states", new NbtList<>(NbtType.COMPOUND, palette));
-        BlockPaletteUtils.convertToJson(proxy, palette);
+                proxy.saveJson("legacy_block_ids.json", sortMap(legacyBlocks));
+                List<NbtMap> palette = new ArrayList<>(packet.getBlockPalette());
+                palette.sort(Comparator.comparingInt(value -> value.getShort("id")));
+                proxy.saveNBT("runtime_block_states", new NbtList<>(NbtType.COMPOUND, palette));
+                BlockPaletteUtils.convertToJson(proxy, palette);
+            }
+        } catch (Exception e) {
+            log.fatal("Error while saving the legacy_block_ids.json and runtime_block_states.dat", e);
+        }
+        
         // TODO This block was commented on upstream ---- END
         
         List<DataEntry> itemData = new ArrayList<>();
