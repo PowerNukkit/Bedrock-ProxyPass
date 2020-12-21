@@ -44,7 +44,7 @@ public class RecipeUtils {
             if (type == CraftingDataType.SHAPED || type == CraftingDataType.SHAPED_CHEMISTRY) {
 
                 int charCounter = 0;
-                ItemData[] inputs = craftingData.getInputs();
+                List<ItemData> inputs = craftingData.getInputs();
                 Map<Item, Character> charItemMap = new HashMap<>();
                 char[][] shape = new char[craftingData.getHeight()][craftingData.getWidth()];
 
@@ -53,7 +53,7 @@ public class RecipeUtils {
                     int index = height * craftingData.getWidth();
                     for (int width = 0; width < craftingData.getWidth(); width++) {
                         int slot = index + width;
-                        Item item = itemFromNetwork(inputs[slot], false);
+                        Item item = itemFromNetwork(inputs.get(slot), false);
 
                         if (item == Item.EMPTY) {
                             continue;
@@ -90,7 +90,7 @@ public class RecipeUtils {
                 if (damage == 0x7fff) damage = -1;
                 if (damage == 0) damage = null;
                 entry.input = new Item(craftingData.getInputId(), damage, null, null);
-                entry.output = itemFromNetwork(craftingData.getOutputs()[0], true);
+                entry.output = itemFromNetwork(craftingData.getOutputs().get(0), true);
             }
             entries.add(entry);
         }
@@ -100,7 +100,7 @@ public class RecipeUtils {
         proxy.saveJson("recipes.json", recipes);
     }
 
-    private static Item[] writeItemArray(ItemData[] inputs, boolean output) {
+    private static Item[] writeItemArray(List<ItemData> inputs, boolean output) {
         List<Item> outputs = new ArrayList<>();
         for (ItemData input : inputs) {
             Item item = itemFromNetwork(input, output);

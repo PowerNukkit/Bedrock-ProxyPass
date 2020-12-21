@@ -17,6 +17,7 @@ import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import com.nukkitx.proxypass.ProxyPass;
 import com.nukkitx.proxypass.network.bedrock.util.BlockPaletteUtils;
 import com.nukkitx.proxypass.network.bedrock.util.RecipeUtils;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
@@ -107,6 +108,10 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             }
         }
 
+        for (int i = 0; i < itemData.size(); i++) {
+            DataEntry dataEntry = itemData.get(i);
+            itemData.set(i, new DataEntry(dataEntry.name, dataEntry.id, i));
+        }
         itemData.sort(Comparator.comparing(o -> o.name));
 
         proxy.saveJson("legacy_item_ids.json", sortMap(legacyItems));
@@ -133,7 +138,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         return false;
     }
 
-    private void dumpCreativeItems(ItemData[] contents) {
+    private void dumpCreativeItems(List<ItemData> contents) {
         List<CreativeItemEntry> entries = new ArrayList<>();
         for (ItemData data : contents) {
             int id = data.getId();
@@ -163,7 +168,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         if (!proxy.getConfiguration().isExportData()) {
             return false;
         }
-        dumpCreativeItems(packet.getContents());
+        dumpCreativeItems(Arrays.asList(packet.getContents()));
         return false;
     }
 
@@ -214,9 +219,17 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         private final int data;
     }
 
+    @AllArgsConstructor
     @Value
     private static class DataEntry {
         private final String name;
         private final int id;
+        private final int runtimeId;
+
+        public DataEntry(String name, int id) {
+            this.name = name;
+            this.id = id;
+            this.runtimeId = 0;
+        }
     }
 }
