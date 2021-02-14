@@ -8,6 +8,7 @@ import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.exception.PacketSerializeException;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
+import com.nukkitx.protocol.bedrock.packet.StartGamePacket;
 import com.nukkitx.protocol.bedrock.packet.UnknownPacket;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import com.nukkitx.proxypass.ProxyPass;
@@ -106,6 +107,18 @@ public class ProxyPlayerSession {
         private ProxyBatchHandler(BedrockSession session, boolean upstream) {
             this.session = session;
             this.logPrefix = upstream ? "[SERVER BOUND]  -  " : "[CLIENT BOUND]  -  ";
+        }
+
+        @Override
+        public void unbufferedHandler(BedrockSession session, BedrockPacket packet) {
+            if (packet instanceof StartGamePacket) {
+                for (StartGamePacket.ItemEntry entry : ((StartGamePacket) packet).getItemEntries()) {
+                    if ("minecraft:shield".equals(entry.getIdentifier())) {
+                        session.getHardcodedBlockingId().set(entry.getId());
+                        return;
+                    }
+                }
+            }
         }
 
         @Override

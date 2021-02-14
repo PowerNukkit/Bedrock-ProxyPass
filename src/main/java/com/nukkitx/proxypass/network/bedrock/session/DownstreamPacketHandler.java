@@ -189,7 +189,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             return false;
         }
         if (packet.getContainerId() == ContainerId.CREATIVE) {
-            dumpCreativeItems(packet.getContents().toArray(new ItemData[0]));
+            dumpCreativeItems(packet.getContents());
         }
         return false;
     }
