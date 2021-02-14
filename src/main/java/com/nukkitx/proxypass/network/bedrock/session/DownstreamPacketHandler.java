@@ -17,6 +17,8 @@ import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import com.nukkitx.proxypass.ProxyPass;
 import com.nukkitx.proxypass.network.bedrock.util.BlockPaletteUtils;
 import com.nukkitx.proxypass.network.bedrock.util.RecipeUtils;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -39,6 +41,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
     private final BedrockClientSession session;
     private final ProxyPlayerSession player;
     private final ProxyPass proxy;
+    private Int2ObjectMap<StartGamePacket.ItemEntry> itemEntries = new Int2ObjectOpenHashMap<>();
 
     public boolean handle(ServerToClientHandshakePacket packet) {
         try {
@@ -106,6 +109,12 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             if (entry.getId() > 255) {
                 legacyItems.putIfAbsent(entry.getIdentifier(), (int) entry.getId());
             }
+
+            if ("minecraft:shield".equals(entry.getIdentifier())) {
+                session.getHardcodedBlockingId().set(entry.getId());
+            }
+
+            this.itemEntries.put(entry.getId(), entry);
         }
 
         for (int i = 0; i < itemData.size(); i++) {
@@ -141,7 +150,8 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
     private void dumpCreativeItems(List<ItemData> contents) {
         List<CreativeItemEntry> entries = new ArrayList<>();
         for (ItemData data : contents) {
-            int id = data.getId();
+            int runtimeId = data.getId();
+            String id = this.itemEntries.get(runtimeId).getIdentifier();
             Integer damage = data.getDamage() == 0 ? null : (int) data.getDamage();
 
             NbtMap tag = data.getTag();
@@ -179,7 +189,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             return false;
         }
         if (packet.getContainerId() == ContainerId.CREATIVE) {
-            dumpCreativeItems(packet.getContents());
+            dumpCreativeItems(packet.getContents().toArray(new ItemData[0]));
         }
         return false;
     }
@@ -198,7 +208,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
     @Value
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private static class CreativeItemEntry {
-        private final int id;
+        private final String id;
         private final Integer damage;
         @JsonProperty("nbt_b64")
         private final String nbt;

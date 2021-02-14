@@ -13,7 +13,7 @@ import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockServer;
-import com.nukkitx.protocol.bedrock.v419.Bedrock_v419;
+import com.nukkitx.protocol.bedrock.v422.Bedrock_v422;
 import com.nukkitx.protocol.bedrock.v422.Bedrock_v422;
 import com.nukkitx.proxypass.network.ProxyBedrockEventHandler;
 import io.netty.util.ResourceLeakDetector;
@@ -72,7 +72,7 @@ public class ProxyPass {
     private Path dataDir;
 
     public static void main(String[] args) {
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
         ProxyPass proxy = new ProxyPass();
         try {
             proxy.boot();
