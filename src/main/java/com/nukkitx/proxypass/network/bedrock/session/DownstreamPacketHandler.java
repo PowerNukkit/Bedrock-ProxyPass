@@ -121,7 +121,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             DataEntry dataEntry = itemData.get(i);
             itemData.set(i, new DataEntry(dataEntry.name, dataEntry.id, i));
         }
-        itemData.sort(Comparator.comparing(o -> o.name));
+        itemData.sort(Comparator.comparing(o -> o.id));
 
         proxy.saveJson("legacy_item_ids.json", sortMap(legacyItems));
         proxy.saveJson("runtime_item_states.json", itemData);
