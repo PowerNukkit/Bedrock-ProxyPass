@@ -22,8 +22,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>nukkitx-repo-release</id>
-            <url>https://repo.nukkitx.com/maven-releases/</url>
+            <id>opencollab-repo-release</id>
+            <url>https://repo.opencollab.dev/maven-releases/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -32,8 +32,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>nukkitx-repo-snapshot</id>
-            <url>https://repo.nukkitx.com/maven-snapshots/</url>
+            <id>opencollab-repo-snapshot</id>
+            <url>https://repo.opencollab.dev/maven-snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -66,8 +66,8 @@
         </dependency>
         <dependency>
             <groupId>org.powernukkit.bedrock.protocol</groupId>
-            <artifactId>bedrock-v431</artifactId>
-            <version>2.7.0-PN-SNAPSHOT</version>
+            <artifactId>bedrock-v440</artifactId>
+            <version>2.8.0-PN-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

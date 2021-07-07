@@ -103,10 +103,21 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         
         List<DataEntry> itemData = new ArrayList<>();
         LinkedHashMap<String, Integer> legacyItems = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> legacyBlocks = new LinkedHashMap<>();
 
         for (StartGamePacket.ItemEntry entry : packet.getItemEntries()) {
             if (entry.getId() > 255) {
                 legacyItems.putIfAbsent(entry.getIdentifier(), (int) entry.getId());
+            } else {
+                String id = entry.getIdentifier();
+                if (id.contains(":item.")) {
+                    id = id.replace(":item.", ":");
+                }
+                if (entry.getId() > 0) {
+                    legacyBlocks.putIfAbsent(id, (int) entry.getId());
+                } else {
+                    legacyBlocks.putIfAbsent(id, 255 - entry.getId());
+                }
             }
 
             if ("minecraft:shield".equals(entry.getIdentifier())) {
@@ -126,6 +137,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         }
         itemData.sort(Comparator.comparing(o -> o.id));
 
+        proxy.saveJson("legacy_block_ids.json", sortMap(legacyBlocks));
         proxy.saveJson("legacy_item_ids.json", sortMap(legacyItems));
         proxy.saveJson("runtime_item_states.json", itemData);
 
@@ -155,6 +167,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             int runtimeId = data.getId();
             String id = this.itemEntries.get(runtimeId).getIdentifier();
             Integer damage = data.getDamage() == 0 ? null : (int) data.getDamage();
+            Integer blockRuntimeId = data.getBlockRuntimeId() == 0 ? null : data.getBlockRuntimeId();
 
             NbtMap tag = data.getTag();
             String tagData = null;
@@ -167,7 +180,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
                 }
                 tagData = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
             }
-            entries.add(new CreativeItemEntry(id, damage, tagData));
+            entries.add(new CreativeItemEntry(id, damage, blockRuntimeId, tagData));
         }
 
         CreativeItems items = new CreativeItems(entries);
@@ -212,6 +225,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
     private static class CreativeItemEntry {
         private final String id;
         private final Integer damage;
+        private final Integer blockRuntimeId;
         @JsonProperty("nbt_b64")
         private final String nbt;
     }
