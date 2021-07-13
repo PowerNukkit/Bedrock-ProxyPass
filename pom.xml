@@ -66,7 +66,7 @@
         </dependency>
         <dependency>
             <groupId>org.powernukkit.bedrock.protocol</groupId>
-            <artifactId>bedrock-v440</artifactId>
+            <artifactId>bedrock-v448</artifactId>
             <version>2.8.1-PN-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

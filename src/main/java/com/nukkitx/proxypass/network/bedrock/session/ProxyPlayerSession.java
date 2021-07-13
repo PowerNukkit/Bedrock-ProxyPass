@@ -109,7 +109,7 @@ public class ProxyPlayerSession {
             this.logPrefix = upstream ? "[SERVER BOUND]  -  " : "[CLIENT BOUND]  -  ";
         }
 
-        @Override
+        /*@Override
         public void unbufferedHandler(BedrockSession session, BedrockPacket packet) {
             if (packet instanceof StartGamePacket) {
                 for (StartGamePacket.ItemEntry entry : ((StartGamePacket) packet).getItemEntries()) {
@@ -119,7 +119,7 @@ public class ProxyPlayerSession {
                     }
                 }
             }
-        }
+        }*/
 
         @Override
         public void handle(BedrockSession session, ByteBuf compressed, Collection<BedrockPacket> packets) {

@@ -78,7 +78,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
 
     public boolean handle(StartGamePacket packet) {
         // TODO This block was commented on upstream ---- START
-        if (!proxy.getConfiguration().isExportData()) {
+        /*if (!proxy.getConfiguration().isExportData()) {
             return false;
         }
         
@@ -97,7 +97,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             }
         } catch (Exception e) {
             log.fatal("Error while saving the legacy_block_ids.json and runtime_block_states.dat", e);
-        }
+        }*/
         
         // TODO This block was commented on upstream ---- END
         
