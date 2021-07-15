@@ -28,6 +28,9 @@ public class RecipeUtils {
 
         for (CraftingData craftingData : packet.getCraftingData()) {
             CraftingDataEntry entry = new CraftingDataEntry();
+            if ("minecraft:dark_oak_planks".equals(craftingData.getRecipeId())) {
+                System.out.println();
+            }
 
             CraftingDataType type = craftingData.getType();
             entry.type = type.ordinal();
@@ -92,7 +95,7 @@ public class RecipeUtils {
                 Integer damage = craftingData.getInputDamage();
                 if (damage == 0x7fff) damage = -1;
                 if (damage == 0) damage = null;
-                entry.input = new Item(craftingData.getInputId(), ProxyPass.legacyIdMap.get(craftingData.getInputId()), damage, null, null);
+                entry.input = new Item(craftingData.getInputId(), ProxyPass.legacyIdMap.get(craftingData.getInputId()), damage, null, null, null);
                 entry.output = itemFromNetwork(craftingData.getOutputs().get(0), true);
             }
             entries.add(entry);
@@ -152,14 +155,16 @@ public class RecipeUtils {
         Integer damage = (int) data.getDamage();
         Integer count = data.getCount();
         String tag = nbtToBase64(data.getTag());
+        Integer blockRuntimeId = null;
 
         if (id == 0) {
             return Item.EMPTY;
         }
         if (damage == 0 || (damage == -1 && output)) damage = null;
         if (count == 1) count = null;
+        if (output && damage == null && data.getBlockRuntimeId() != 0) blockRuntimeId = data.getBlockRuntimeId();
 
-        return new Item(id, identifier, damage, count, tag);
+        return new Item(id, identifier, damage, count, blockRuntimeId, tag);
     }
 
     @NoArgsConstructor
@@ -201,12 +206,13 @@ public class RecipeUtils {
     @Value
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private static class Item {
-        public static final Item EMPTY = new Item(0, "minecraft:air", null, null, null);
+        public static final Item EMPTY = new Item(0, "minecraft:air", null, null, null, null);
 
         int legacyId;
         String id;
         Integer damage;
         Integer count;
+        Integer blockRuntimeId;
         String nbt_b64;
     }
 
