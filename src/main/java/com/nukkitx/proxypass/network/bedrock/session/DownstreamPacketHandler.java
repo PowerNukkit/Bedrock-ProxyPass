@@ -17,6 +17,8 @@ import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import com.nukkitx.proxypass.ProxyPass;
 import com.nukkitx.proxypass.network.bedrock.util.BlockPaletteUtils;
 import com.nukkitx.proxypass.network.bedrock.util.RecipeUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.AllArgsConstructor;
@@ -27,7 +29,11 @@ import lombok.extern.log4j.Log4j2;
 import javax.crypto.SecretKey;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.ECPublicKey;
@@ -81,7 +87,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         /*if (!proxy.getConfiguration().isExportData()) {
             return false;
         }
-        
+
         try {
             if (packet.getBlockPalette() != null) {
                 Map<String, Integer> legacyBlocks = new HashMap<>();
@@ -98,9 +104,9 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         } catch (Exception e) {
             log.fatal("Error while saving the legacy_block_ids.json and runtime_block_states.dat", e);
         }*/
-        
+
         // TODO This block was commented on upstream ---- END
-        
+
         List<DataEntry> itemData = new ArrayList<>();
         LinkedHashMap<String, Integer> legacyItems = new LinkedHashMap<>();
         LinkedHashMap<String, Integer> legacyBlocks = new LinkedHashMap<>();
@@ -149,7 +155,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         if (!proxy.getConfiguration().isExportData()) {
             return false;
         }
-        
+
         RecipeUtils.writeRecipes(packet, this.proxy);
         return false;
     }
@@ -194,6 +200,21 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             return false;
         }
         dumpCreativeItems(Arrays.asList(packet.getContents()));
+
+        // nukkix - start
+        Path path = proxy.getDataDir().resolve("creative_contents.dat");
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.ioBuffer();
+        try {
+            ProxyPass.CODEC.tryEncode(buffer, packet, session);
+            try (OutputStream out = Files.newOutputStream(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)){
+                buffer.readBytes(out, buffer.readableBytes());
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        } finally {
+            buffer.release();
+        }
+        // nukkix - end
         return false;
     }
 
