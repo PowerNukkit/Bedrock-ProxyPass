@@ -191,7 +191,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
 
         CreativeItems items = new CreativeItems(entries);
 
-        proxy.saveJson("creative_items.json", items);
+        proxy.saveJson("creativeitems.json", items);
     }
 
     @Override
