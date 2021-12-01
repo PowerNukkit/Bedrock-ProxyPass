@@ -70,8 +70,8 @@
         </dependency>
         <dependency>
             <groupId>org.powernukkit.bedrock.protocol</groupId>
-            <artifactId>bedrock-v471</artifactId>
-            <version>2.9.3-PN-SNAPSHOT</version>
+            <artifactId>bedrock-v476</artifactId>
+            <version>2.9.4-PN-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
