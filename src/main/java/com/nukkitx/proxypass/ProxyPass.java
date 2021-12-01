@@ -23,6 +23,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -156,7 +157,7 @@ public class ProxyPass {
              NBTOutputStream nbtOutputStream = NbtUtils.createNetworkWriter(outputStream)){
             nbtOutputStream.writeTag(dataTag);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -166,16 +167,19 @@ public class ProxyPass {
              NBTInputStream nbtInputStream = NbtUtils.createNetworkReader(inputStream)){
             return nbtInputStream.readTag();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
     public void saveJson(String name, Object object) {
         Path outPath = dataDir.resolve(name);
-        try (OutputStream outputStream = Files.newOutputStream(outPath, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
-            ProxyPass.JSON_MAPPER.writer(PRETTY_PRINTER).writeValue(outputStream, object);
+        try {
+            Files.createDirectories(outPath.getParent());
+            try (OutputStream outputStream = Files.newOutputStream(outPath, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+                ProxyPass.JSON_MAPPER.writer(PRETTY_PRINTER).writeValue(outputStream, object);
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -184,7 +188,7 @@ public class ProxyPass {
         try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
             return ProxyPass.JSON_MAPPER.readValue(inputStream, reference);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -193,7 +197,7 @@ public class ProxyPass {
         try {
             Files.write(outPath, nbt.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
