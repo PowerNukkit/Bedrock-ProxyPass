@@ -171,7 +171,11 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
         List<CreativeItemEntry> entries = new ArrayList<>();
         for (ItemData data : contents) {
             int runtimeId = data.getId();
-            String id = this.itemEntries.get(runtimeId).getIdentifier();
+            StartGamePacket.ItemEntry entry = this.itemEntries.get(runtimeId);
+            if (entry == null) {
+                continue;
+            }
+            String id = entry.getIdentifier();
             Integer damage = data.getDamage() == 0 ? null : (int) data.getDamage();
             Integer blockRuntimeId = data.getBlockRuntimeId() == 0 ? null : data.getBlockRuntimeId();
 
