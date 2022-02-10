@@ -14,6 +14,7 @@ import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockServer;
 import com.nukkitx.protocol.bedrock.v475.Bedrock_v475;
+import com.nukkitx.protocol.bedrock.v475.Bedrock_v475;
 import com.nukkitx.proxypass.network.ProxyBedrockEventHandler;
 import io.netty.util.ResourceLeakDetector;
 import lombok.AccessLevel;
