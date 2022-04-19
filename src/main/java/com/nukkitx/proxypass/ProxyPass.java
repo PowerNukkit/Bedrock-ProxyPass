@@ -13,7 +13,7 @@ import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockServer;
-import com.nukkitx.protocol.bedrock.v486.Bedrock_v486;
+import com.nukkitx.protocol.bedrock.v503.Bedrock_v503;
 import com.nukkitx.proxypass.network.ProxyBedrockEventHandler;
 import io.netty.util.ResourceLeakDetector;
 import lombok.AccessLevel;
@@ -23,6 +23,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +39,7 @@ public class ProxyPass {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final YAMLMapper YAML_MAPPER = (YAMLMapper) new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final String MINECRAFT_VERSION;
-    public static final BedrockPacketCodec CODEC = Bedrock_v486.V486_CODEC;
+    public static final BedrockPacketCodec CODEC = Bedrock_v503.V503_CODEC;
     public static final int PROTOCOL_VERSION = CODEC.getProtocolVersion();
     private static final DefaultPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
     public static Map<Integer, String> legacyIdMap = new HashMap<>();
@@ -165,6 +166,16 @@ public class ProxyPass {
         Path path = dataDir.resolve(dataName + ".dat");
         try (InputStream inputStream = Files.newInputStream(path);
              NBTInputStream nbtInputStream = NbtUtils.createNetworkReader(inputStream)){
+            return nbtInputStream.readTag();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public Object loadGzipNBT(String dataName) {
+        Path path = dataDir.resolve(dataName);
+        try (InputStream inputStream = Files.newInputStream(path);
+             NBTInputStream nbtInputStream = NbtUtils.createGZIPReader(inputStream)){
             return nbtInputStream.readTag();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
