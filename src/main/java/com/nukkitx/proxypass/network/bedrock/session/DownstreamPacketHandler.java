@@ -173,6 +173,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             int runtimeId = data.getId();
             StartGamePacket.ItemEntry entry = this.itemEntries.get(runtimeId);
             if (entry == null) {
+                log.info("Could not find entry for item with runtime ID {}", runtimeId);
                 continue;
             }
             String id = entry.getIdentifier();

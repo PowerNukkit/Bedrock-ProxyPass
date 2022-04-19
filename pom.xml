@@ -21,10 +21,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <!--<repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>-->
         <repository>
             <id>opencollab-repo-release</id>
             <url>https://repo.opencollab.dev/maven-releases/</url>
