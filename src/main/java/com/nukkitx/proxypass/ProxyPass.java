@@ -178,7 +178,7 @@ public class ProxyPass {
              NBTInputStream nbtInputStream = NbtUtils.createGZIPReader(inputStream)){
             return nbtInputStream.readTag();
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            return null;
         }
     }
 

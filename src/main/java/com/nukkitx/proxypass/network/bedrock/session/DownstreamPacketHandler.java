@@ -191,6 +191,7 @@ public class DownstreamPacketHandler implements BedrockPacketHandler {
             String blockTag = null;
             Integer blockRuntimeId = null;
             if (data.getBlockRuntimeId() != 0 && paletteTags != null) {
+                blockRuntimeId = data.getBlockRuntimeId();
                 blockTag = encodeNbtToString(paletteTags.get(data.getBlockRuntimeId()));
             } else if (data.getBlockRuntimeId() != 0) {
                 blockRuntimeId = data.getBlockRuntimeId();
