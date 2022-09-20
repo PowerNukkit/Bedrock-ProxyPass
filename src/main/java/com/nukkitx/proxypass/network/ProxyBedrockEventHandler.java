@@ -5,7 +5,6 @@ import com.nukkitx.protocol.bedrock.BedrockServerEventHandler;
 import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.proxypass.ProxyPass;
 import com.nukkitx.proxypass.network.bedrock.session.UpstreamPacketHandler;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
@@ -28,6 +27,7 @@ public class ProxyBedrockEventHandler implements BedrockServerEventHandler {
         ADVERTISEMENT.setPlayerCount(0);
         ADVERTISEMENT.setMaximumPlayerCount(20);
         ADVERTISEMENT.setSubMotd("https://github.com/NukkitX/ProxyPass");
+        ADVERTISEMENT.setNintendoLimited(true);
     }
 
     public ProxyBedrockEventHandler(ProxyPass proxy) {
